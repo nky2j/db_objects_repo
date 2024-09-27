@@ -7,7 +7,7 @@ on:
       - main
     paths:
       #- '002_VENDORS/120_RAW/170_STAGES/**'
-      - '001_peoplesoft/**'
+      - '001_VENDORS/**'
 
   # Allows you  run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,10 +37,10 @@ jobs:
         run: |
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           python --version
-          echo "Contents of 001_peoplesoft:"
-          ls -l $GITHUB_WORKSPACE/001_peoplesoft
+          echo "Contents of 001_VENDORS:"
+          ls -l $GITHUB_WORKSPACE/001_VENDORS
           echo "Step 1: Installing schemachange"
           pip install schemachange
           
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/001_peoplesoft -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/001_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
