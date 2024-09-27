@@ -1,4 +1,4 @@
-name: snowflake-devops-data-projects
+name: snowflake-devops-db-objects
 
 # Controls when the action will run. 
 on:
