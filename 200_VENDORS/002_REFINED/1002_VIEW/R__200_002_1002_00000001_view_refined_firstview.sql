@@ -1,0 +1,3 @@
+USE DATABASE VENDORS;
+USE SCHEMA RAW;
+CREATE OR REPLACE VIEW refined_firstview AS SELECT * FROM refined_first;
