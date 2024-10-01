@@ -1,11 +1,11 @@
 name: Deploy to Snowflake
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '200_VENDORS/001_RAW/1001_TABLE/**'
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - '200_VENDORS/001_RAW/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -45,11 +45,11 @@ jobs:
           python --version
           
           echo "Selected Environment: ${ENV}"  # Print selected env for debug
-          echo "Checking contents of 200_VENDORS/001_RAW/1001_TABLE:"
-          ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE
+          echo "Checking contents of 200_VENDORS/001_RAW:"
+          ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW
 
           echo "Step 1: Installing schemachange"
           pip install schemachange
           
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/001_RAW -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
