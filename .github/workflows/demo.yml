@@ -30,15 +30,17 @@ jobs:
           python-version: 3.8.x
 
       - name: Set environment variable
-        run: echo "ENV=${{ github.event.inputs.env }}" >> $GITHUB_ENV
+        env:
+          ENV: ${{ secrets.ENV }}  
+        run: echo "ENV=${{ secrets.ENV }}" >> $GITHUB_ENV
 
       - name: Set Snowflake user based on environment
         run: |
-          if [ "${{ github.event.inputs.env }}" = "dev" ]; then
+          if [ "${{ secrets.ENV }}" = "DEV" ]; then
             echo "SNOWFLAKE_USER=DEV_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.env }}" = "uat" ]; then
+          elif [ "${{ secrets.ENV }}" = "UAT" ]; then
             echo "SNOWFLAKE_USER=UAT_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.env }}" = "prod" ]; then
+          elif [ "${{ secrets.ENV }}" = "PROD" ]; then
             echo "SNOWFLAKE_USER=PROD_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
           else
             echo "Invalid environment selected!" >&2
