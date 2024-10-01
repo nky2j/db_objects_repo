@@ -32,8 +32,10 @@ jobs:
             echo "SF_ROLE=DEV_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "UAT" ]; then
             echo "SF_USERNAME=UAT_SCHEMACHANGE_USER" >> $GITHUB_ENV
+            echo "SF_ROLE=UAT_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "PROD" ]; then
             echo "SF_USERNAME=PROD_SCHEMACHANGE_USER" >> $GITHUB_ENV
+            echo "SF_ROLE=PROD_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
           else
             echo "Invalid environment selected!" >&2
             exit 1
@@ -42,8 +44,8 @@ jobs:
       - name: Run schemachange
         env:
           SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  #Use the dynamically set environment variable here
-          SF_ROLE: ${{ secrets.SF_ROLE }}
+          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  
+          SF_ROLE: ${{ env.SF_ROLE }}
           SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
