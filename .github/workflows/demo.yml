@@ -29,6 +29,7 @@ jobs:
         run: |
           if [ "${{ secrets.ENV }}" = "DEV" ]; then
             echo "SF_USERNAME=DEV_SCHEMACHANGE_USER" >> $GITHUB_ENV
+            echo "SF_ROLE=DEV_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "UAT" ]; then
             echo "SF_USERNAME=UAT_SCHEMACHANGE_USER" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "PROD" ]; then
@@ -41,7 +42,7 @@ jobs:
       - name: Run schemachange
         env:
           SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  #Use the dynamically set  environment variable here
+          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  #Use the dynamically set environment variable here
           SF_ROLE: ${{ secrets.SF_ROLE }}
           SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
@@ -49,6 +50,7 @@ jobs:
         run: |
           echo "Selected Environment: ${ENV}"
           echo "Using Snowflake User: ${SNOWFLAKE_USER}"
+          echo "Using Snowflake Role: ${SF_ROLE}"
 
           echo "Checking contents of 200_VENDORS/001_RAW/1001_TABLE:"
           ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE
