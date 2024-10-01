@@ -1,20 +1,20 @@
 name: Deploy to Snowflake
 
 on:
-  #push:
-  #  branches:
-  #    - main
-  #  paths:
-  #    - '200_VENDORS/001_RAW/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '200_VENDORS/001_RAW/**'
 
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-    inputs:
-      env:
-        description: 'Select the environment (dev, uat, prod)'
-        required: true
-        default: 'dev'  # Set 'dev' as default but can be changed at runtime
-        type: string
+  #workflow_dispatch:
+  #  inputs:
+  #    env:
+  #      description: 'Select the environment (dev, uat, prod)'
+  #      required: true
+  #      default: 'dev'  # Set 'dev' as default but can be changed at runtime
+  #      type: string
 
 jobs:
   deploy-snowflake-changes-job:
@@ -37,11 +37,11 @@ jobs:
       - name: Set Snowflake user based on environment
         run: |
           if [ "${{ secrets.ENV }}" = "DEV" ]; then
-            echo "SNOWFLAKE_USER=DEV_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+            echo "SF_USERNAME=DEV_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "UAT" ]; then
-            echo "SNOWFLAKE_USER=UAT_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+            echo "SF_USERNAME=UAT_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
           elif [ "${{ secrets.ENV }}" = "PROD" ]; then
-            echo "SNOWFLAKE_USER=PROD_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+            echo "SF_USERNAME=PROD_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
           else
             echo "Invalid environment selected!" >&2
             exit 1
