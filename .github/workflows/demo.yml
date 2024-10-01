@@ -32,6 +32,19 @@ jobs:
       - name: Set environment variable
         run: echo "ENV=${{ github.event.inputs.env }}" >> $GITHUB_ENV
 
+      - name: Set Snowflake user based on environment
+        run: |
+          if [ "${{ github.event.inputs.env }}" = "dev" ]; then
+            echo "SNOWFLAKE_USER=DEV_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+          elif [ "${{ github.event.inputs.env }}" = "uat" ]; then
+            echo "SNOWFLAKE_USER=UAT_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+          elif [ "${{ github.event.inputs.env }}" = "prod" ]; then
+            echo "SNOWFLAKE_USER=PROD_SCHEMACHANGE_TRIAL" >> $GITHUB_ENV
+          else
+            echo "Invalid environment selected!" >&2
+            exit 1
+          fi
+
       - name: Run schemachange
         env:
           SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
@@ -41,15 +54,17 @@ jobs:
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
         run: |
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          python --version
-          
-          echo "Selected Environment: ${ENV}"  # Print selected env for debug
-          echo "Checking contents of 200_VENDORS/001_RAW:"
-          ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW
+          echo "Selected Environment: ${ENV}"
+          echo "Using Snowflake User: ${SNOWFLAKE_USER}"
+
+          echo "Checking contents of 200_VENDORS/001_RAW/1001_TABLE:"
+          ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE
 
           echo "Step 1: Installing schemachange"
           pip install schemachange
-          
+        
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/001_RAW -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE \
+          -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE \
+          -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE \
+          -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
