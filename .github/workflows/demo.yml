@@ -1,24 +1,19 @@
 name: snowflake-devops-db-objects
 
-# Controls when the action will run. 
 on:
   push:
     branches:
       - main
     paths:
-      #- '002_PEOPLESOFT/120_RAW/170_STAGES/**'
       - '200_VENDORS/001_RAW/1001_TABLE/**'
 
-  # Allows you  run this workflow manually from the Actions tab
   workflow_dispatch:
-    
 
 jobs:
   deploy-snowflake-changes-job:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -29,13 +24,13 @@ jobs:
 
       - name: Set environment variable
         env:
-          ENV: ${{ secrets.ENV }}  # Set this secret in your GitHub repository settings
+          ENV: ${{ secrets.ENV }}  
         run: echo "ENV=${{ secrets.ENV }}" >> $GITHUB_ENV
 
       - name: Run schemachange
         env:
           SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER : ${{ secrets.SF_USERNAME }}
+          SNOWFLAKE_USER: ${{ secrets.SF_USERNAME }}   # Fixed spacing
           SF_ROLE: ${{ secrets.SF_ROLE }}
           SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
@@ -43,8 +38,10 @@ jobs:
         run: |
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           python --version
-          echo "Contents of 200_VENDORS/001_RAW/1001_TABLE:"
+          
+          echo "Checking contents of 200_VENDORS/001_RAW/1001_TABLE:"
           ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE
+
           echo "Step 1: Installing schemachange"
           pip install schemachange
           
