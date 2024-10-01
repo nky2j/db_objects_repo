@@ -41,7 +41,7 @@ jobs:
       - name: Run schemachange
         env:
           SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  #Use the dynamically set environment variable here
+          SNOWFLAKE_USER: ${{ env.SF_USERNAME }}  #Use the dynamically set  environment variable here
           SF_ROLE: ${{ secrets.SF_ROLE }}
           SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
