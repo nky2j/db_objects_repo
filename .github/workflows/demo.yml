@@ -7,6 +7,15 @@ on:
     paths:
       - '200_VENDORS/001_RAW/**'
 
+  #Allows you to run this workflow manually from the Actions tab
+  #workflow_dispatch:
+  #  inputs:
+  #    env:
+  #      description: 'Select the environment (dev, uat, prod)'
+  #      required: true
+  #      default: 'dev'  # Set 'dev' as default but can be changed at runtime
+  #      type: string
+
 jobs:
   deploy-snowflake-changes-job:
     runs-on: ubuntu-latest
