@@ -16,5 +16,5 @@ from snowflake.snowpark.functions import col, call_udf
 import requests
 import pandas as pd
 
-   return 'yes';
+return 'yes';
 $$;
