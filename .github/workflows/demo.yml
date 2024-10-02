@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'Select the environment (dev, uat, prod)'
+        description: 'Select the environment (DEV,UAT,PROD)'
         required: true
-        default: 'dev'  # Set 'dev' as default but can be changed at runtime
+        default: 'DEV'  # Set 'dev' as default but can be changed at runtime
         type: string
 
 jobs:
