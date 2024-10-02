@@ -13,7 +13,7 @@ on:
       env:
         description: 'Select the environment (DEV,UAT,PROD)'
         required: true
-        default: 'DEV'  # Set 'dev' as default but can be changed at runtime
+        default: 'DEV'  # Set 'DEV' as default but can be changed at runtime
         type: string
 
 jobs:
@@ -61,11 +61,11 @@ jobs:
           echo "Using Snowflake User: ${SNOWFLAKE_USER}"
           echo "Using Snowflake Role: ${SF_ROLE}"
 
-          echo "Checking contents of 200_VENDORS/001_RAW/1001_TABLE:"
-          ls -l $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE
+          echo "Checking contents of 200_VENDORS/002_REFINED :"
+          ls -l $GITHUB_WORKSPACE/200_VENDORS/002_REFINED
 
           echo "Step 1: Installing schemachange"
           pip install schemachange
         
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/001_RAW/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
