@@ -1,3 +1,0 @@
-USE DATABASE VENDORS;
-USE SCHEMA RAW;
-CREATE OR REPLACE VIEW refined_secondview AS SELECT * FROM refined_second;

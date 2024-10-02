@@ -1,20 +1,20 @@
 name: Deploy to Snowflake
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '200_VENDORS/001_RAW/**'
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - '200_VENDORS/001_RAW/**'
 
   #Allows you to run this workflow manually from the Actions tab
-  #workflow_dispatch:
-  #  inputs:
-  #    env:
-  #      description: 'Select the environment (dev, uat, prod)'
-  #      required: true
-  #      default: 'dev'  # Set 'dev' as default but can be changed at runtime
-  #      type: string
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Select the environment (dev, uat, prod)'
+        required: true
+        default: 'dev'  # Set 'dev' as default but can be changed at runtime
+        type: string
 
 jobs:
   deploy-snowflake-changes-job:
@@ -29,20 +29,18 @@ jobs:
         with:
           python-version: 3.8.x
 
-      - name: Set environment variable
-        env:
-          ENV: ${{ secrets.ENV }}  
-        run: echo "ENV=${{ secrets.ENV }}" >> $GITHUB_ENV
+      - name: Set environment variable from workflow dispatch input
+        run: echo "ENV=${{ github.event.inputs.ENV }}" >> $GITHUB_ENV
 
       - name: Set Snowflake user based on environment
         run: |
-          if [ "${{ secrets.ENV }}" = "DEV" ]; then
+          if [ "${{ github.event.inputs.ENV }}" = "DEV" ]; then
             echo "SF_USERNAME=DEV_SCHEMACHANGE_USER" >> $GITHUB_ENV
             echo "SF_ROLE=DEV_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
-          elif [ "${{ secrets.ENV }}" = "UAT" ]; then
+          elif [ "${{ github.event.inputs.ENV }}" = "UAT" ]; then
             echo "SF_USERNAME=UAT_SCHEMACHANGE_USER" >> $GITHUB_ENV
             echo "SF_ROLE=UAT_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
-          elif [ "${{ secrets.ENV }}" = "PROD" ]; then
+          elif [ "${{ github.event.inputs.ENV }}" = "PROD" ]; then
             echo "SF_USERNAME=PROD_SCHEMACHANGE_USER" >> $GITHUB_ENV
             echo "SF_ROLE=PROD_SCHEMACHANGE_ROLE" >> $GITHUB_ENV
           else
