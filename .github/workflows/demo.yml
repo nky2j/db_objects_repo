@@ -68,4 +68,4 @@ jobs:
           pip install schemachange
         
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
