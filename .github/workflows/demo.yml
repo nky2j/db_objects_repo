@@ -61,8 +61,8 @@ jobs:
           echo "Using Snowflake User: ${SNOWFLAKE_USER}"
           echo "Using Snowflake Role: ${SF_ROLE}"
 
-          echo "Checking contents of 200_VENDORS/002_REFINED :"
-          ls -l $GITHUB_WORKSPACE/200_VENDORS/002_REFINED
+          echo "Checking contents of 200_VENDORS :"
+          ls -l $GITHUB_WORKSPACE/200_VENDORS
 
           echo "Step 1: Installing schemachange"
           pip install schemachange

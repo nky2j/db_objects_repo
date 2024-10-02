@@ -17,5 +17,5 @@ import requests
 import pandas as pd
 
 def main(session: snowpark.Session):
-  return 'yes';
+  return  'yes';
 $$;
