@@ -1,3 +1,3 @@
 USE DATABASE {{ env }}_VENDORS;
 USE SCHEMA  RAW;
-CREATE VIEW IF NOT EXISTS raw_secondview AS SELECT * FROM raw_second;
+CREATE OR REPLACE VIEW {{ env }}_raw_secondview AS SELECT * FROM {{ env }}_raw_second;
