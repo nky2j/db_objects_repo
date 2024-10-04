@@ -1,9 +1,9 @@
-name: snowflake-devops-data-projects
+name: Deploy to vendors database in Snowflake
 
 on:
   push:
     branches:
-      - hof
+      - main
     paths:
       - '200_VENDORS/001_RAW/1001_TABLE/**'
   
@@ -46,7 +46,7 @@ jobs:
           SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}  # Use environment-specific variables for SF_WAREHOUSE
           SNOWFLAKE_USER: ${{ vars.SF_USERNAME }}  # Use environment-specific variables for SF_USERNAME
           SF_ROLE: ${{ vars.SF_ROLE }}  # Use environment-specific variables for SF_ROLE
-          SF_DATABASE: ${{ vars.SF_DATABASE }}  # Use environment-specific variables for SF_DATABASE
+          SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}  # Use environment-specific variables for SF_DATABASE
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}  # Use environment-specific secrets for SF_PASSWORD
           ENV: ${{ vars.ENV }}  # Make ENV available in the run script
         run: |

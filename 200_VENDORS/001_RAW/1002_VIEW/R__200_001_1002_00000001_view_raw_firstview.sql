@@ -1,3 +1,3 @@
 USE DATABASE {{ env }}_VENDORS;
 USE SCHEMA  RAW;
-CREATE OR REPLACE VIEW {{ env }}_raw_firstview AS SELECT * FROM {{ env }}_raw_first;
+CREATE OR REPLACE VIEW {{ env }}_VENDORS_raw_firstview AS SELECT * FROM {{ env }}_VENDORS_raw_first;
