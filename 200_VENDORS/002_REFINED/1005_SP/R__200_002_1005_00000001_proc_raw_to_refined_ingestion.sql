@@ -1,6 +1,6 @@
---CALL {{ env }}_VENDORS_RAW_TO_REFINED_INGESTION();
+CALL {{ env }}_VENDORS_RAW_TO_REFINED_INGESTION();
 
-USE DATABASE  {{ env }}_VENDORS;
+/*USE DATABASE  {{ env }}_VENDORS;
 USE SCHEMA REFINED;
 
 CREATE OR REPLACE procedure {{ env }}_VENDORS_RAW_TO_REFINED_INGESTION()
@@ -38,4 +38,5 @@ def main(session: Session) -> str:
 
     return "Data inserted successfully into REFINED tables."
 $$;
+*/
 
