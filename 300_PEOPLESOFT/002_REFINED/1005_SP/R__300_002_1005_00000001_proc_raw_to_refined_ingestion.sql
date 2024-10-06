@@ -1,4 +1,7 @@
-/*
+--CALL {{ env }}_PEOPLESOFT.REFINED.{{ env }}_PEOPLESOFT_RAW_TO_REFINED_INGESTION();
+USE DATABASE {{ env }}_PEOPLESOFT;
+USE SCHEMA REFINED;
+
 CREATE OR REPLACE procedure {{ env }}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()
 RETURNS VARCHAR
 LANGUAGE PYTHON
@@ -34,5 +37,3 @@ def main(session: Session) -> str:
 
     return "Data inserted successfully into REFINED tables."
 $$;
-*/
-CALL {{ env }}_PEOPLESOFT.REFINED.{{ env }}_PEOPLESOFT_RAW_TO_REFINED_INGESTION();
