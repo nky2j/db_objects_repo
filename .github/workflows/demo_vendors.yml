@@ -42,6 +42,7 @@ jobs:
         run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
 
       - name: Run schemachange
+        if: !startsWith(github.event.head_commit.message, '200_VENDORS/002_REFINED/1005_SP')
         env:
           SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}  # Use environment-specific variables for SF_ACCOUNT
           SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}  # Use environment-specific variables for SF_WAREHOUSE
@@ -61,7 +62,7 @@ jobs:
           schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
  
       - name: Call ingestion procedure
-        if: contains(github.event.head_commit.message, '200_VENDORS/002_REFINED/1005_SP')
+        if: startsWith(github.event.head_commit.message, '200_VENDORS/002_REFINED/1005_SP')
         env:
             SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}  
             SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}  
