@@ -6,28 +6,15 @@ on:
       - main
     paths:
       - '200_VENDORS/002_REFINED/**'
-      - '200_VENDORS/002_REFINED/1005_SP/**' 
-  
-
-  #Allows you to run this workflow manually from the Actions tab,2 options:- environment
-  # 6 change-history tables acc . to our implementation in raw schema
-  #workflow_dispatch:
-  #  inputs:
-  #    env:
-  #      description: 'Select the environment (DEV,UAT,PROD)'
-  #      required: true
-  #      default: 'DEV'  # Set 'DEV' as default but can be changed at runtime
-  #      type: string
 
 jobs:
   deploy-snowflake-changes-job:
     runs-on: ubuntu-latest
 
     # Specify that the job will run for the selected environment based on the ENV repository secret
-    environment: ${{ vars.ENV }} # ENV is  now defined at the repository level
+    environment: ${{ vars.ENV }}
 
     steps:
-      # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -42,35 +29,35 @@ jobs:
         run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
 
       - name: Run schemachange
-        if: not contains(${{ github.event.head_commit.message }}, '200_VENDORS/002_REFINED/1005_SP')
+        if: "!contains(github.event.head_commit.message, '200_VENDORS/002_REFINED/1005_SP')"
         env:
-          SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}  # Use environment-specific variables for SF_ACCOUNT
-          SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}  # Use environment-specific variables for SF_WAREHOUSE
-          SNOWFLAKE_USER: ${{ vars.SF_USERNAME }}  # Use environment-specific variables for SF_USERNAME
-          SF_ROLE: ${{ vars.SF_ROLE }}  # Use environment-specific variables for SF_ROLE
-          SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}  # Use environment-specific variables for SF_DATABASE
-          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}  # Use environment-specific secrets for SF_PASSWORD
-          ENV: ${{ vars.ENV }}  # Make ENV available in the run script
+          SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}
+          SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
+          SNOWFLAKE_USER: ${{ vars.SF_USERNAME }}
+          SF_ROLE: ${{ vars.SF_ROLE }}
+          SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          ENV: ${{ vars.ENV }}
         run: |
           echo "Deploying to environment: ${ENV}"
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           python --version
           echo "Step 1: Installing schemachange"
           pip install schemachange
-          
+
           echo "Step 2: Running schemachange"
           schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
- 
+
       - name: Call ingestion procedure
-        if: contains(${{ github.event.head_commit.message }}, '200_VENDORS/002_REFINED/1005_SP')
+        if: "contains(github.event.head_commit.message, '200_VENDORS/002_REFINED/1005_SP')"
         env:
-            SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}  
-            SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}  
-            SNOWFLAKE_USER: ${{ vars.SF_USERNAME }}  
-            SF_ROLE: ${{ vars.SF_ROLE }}  
-            SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}  
-            SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}  
-            ENV: ${{ vars.ENV }}  
+            SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}
+            SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
+            SNOWFLAKE_USER: ${{ vars.SF_USERNAME }}
+            SF_ROLE: ${{ vars.SF_ROLE }}
+            SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
+            SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
+            ENV: ${{ vars.ENV }}
         run: |
             echo "Calling the ingestion procedure: ${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
-            snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1005_SP/R__200_002_1005_00000001_proc_raw_to_refined_ingestion.sql;
+            snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1005_SP/R__200_002_1005_00000001_proc_raw_to_refined_ingestion.sql
