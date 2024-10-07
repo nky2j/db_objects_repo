@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install schemachange
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql
-          sudo install -m 755 snowsql /usr/local/bin
+          curl -L -o snowsql-linux_x86_64 https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-linux_x86_64
+          sudo install -m 755 snowsql-linux_x86_64 /usr/local/bin/snowsql
 
       - name: Set environment variable
         run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
