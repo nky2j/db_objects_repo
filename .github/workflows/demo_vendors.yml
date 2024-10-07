@@ -58,4 +58,4 @@ jobs:
           ENV: ${{ vars.ENV }}
         run: | 
           echo "Calling the ingestion procedure: ${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
-          snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()"
+          snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION();"
