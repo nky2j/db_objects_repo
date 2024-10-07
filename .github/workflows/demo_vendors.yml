@@ -26,9 +26,7 @@ jobs:
         run: pip install schemachange
 
       - name: Set environment variable
-        run: |
-          echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
-          echo ${{ github.event.head_commit.message }}
+        run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
 
       - name: Run schemachange
         if: ${{ !contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
@@ -55,6 +53,6 @@ jobs:
           SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
           ENV: ${{ vars.ENV }}
-        run: |
+        run: | 
           echo "Calling the ingestion procedure: ${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
-          snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1005_SP/R__200_002_1005_00000001_proc_raw_to_refined_ingestion.sql
+          snowsql -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()"
