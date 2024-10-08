@@ -44,6 +44,7 @@ jobs:
       - name: Call ingestion procedure through Snowsql
         if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
         env:
+          SNOWSQL_DEST: ~/snowflake
           SNOWSQL_ACCOUNT: ${{ vars.SF_ACCOUNT }}
           SNOWSQL_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
           SNOWSQL_USER: ${{ vars.SF_USERNAME }}
