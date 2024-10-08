@@ -22,12 +22,6 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install dependencies
-        run: |
-          pip install schemachange
-          curl -L -o snowsql-linux_x86_64 https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-linux_x86_64
-          sudo install -m 755 snowsql-linux_x86_64 /usr/local/bin/snowsql
-
       - name: Set environment variable
         run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
 
@@ -42,11 +36,12 @@ jobs:
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
           ENV: ${{ vars.ENV }}
         run: |
+          pip install schemachange
           echo "Deploying to environment: ${ENV}"
           python --version
           schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table || echo "Schema change failed"
 
-      - name: Call ingestion procedure
+      - name: Call ingestion procedure through Snowsql
         if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
         env:
           SNOWSQL_ACCOUNT: ${{ vars.SF_ACCOUNT }}
@@ -57,5 +52,8 @@ jobs:
           SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
           ENV: ${{ vars.ENV }}
         run: | 
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+          ~/snowflake/snowsql -v
           echo "Calling the ingestion procedure: ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
-          snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION();"
+          snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()"
