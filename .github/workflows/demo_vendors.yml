@@ -1,11 +1,27 @@
 name: Deploy to vendors database in Snowflake
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '200_VENDORS/002_REFINED/**'
+  pull_request:
+      types: [closed]  # Trigger when a pull request is closed
+      branches:
+        - main  # Only trigger if the PR is merged into the 'dev' branch
+    
+  workflow_dispatch:
+      inputs:
+        environment:
+          description: 'Choose the environment to deploy to (DEV, UAT, PROD)'
+          required: true
+          default: DEV
+          type: choice
+          options:
+            - DEV
+            - UAT
+            - PROD
+  #push:
+  #  branches:
+  #    - dev
+  #  paths:
+  #    - '200_VENDORS/002_REFINED/**'
 
 jobs:
   deploy-snowflake-changes-job:
@@ -15,12 +31,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Use Python '3.12'
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - name: Set environment variable
         run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
@@ -34,12 +50,12 @@ jobs:
           SF_ROLE: ${{ vars.SF_ROLE }}
           SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
-          ENV: ${{ vars.ENV }}
+          ENVRN: ${{ vars.ENV }}
         run: |
           pip install schemachange
           echo "Deploying to environment: ${ENV}"
           python --version
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{"env": "'${ENV}'"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table || echo "Schema change failed"
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "{\"env\":\"${{ env.ENV_UPPERCASE }}\"}" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table || echo "Schema change failed"
 
       - name: Call ingestion procedure through Snowsql
         if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}

@@ -1,11 +1,27 @@
 name: Deploy to peoplesoft database in Snowflake
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '300_PEOPLESOFT/002_REFINED/**'
+  pull_request:
+      types: [closed]  # Trigger when a pull request is closed
+      branches:
+        - main  # Only trigger if the PR is merged into the 'dev' branch
+    
+  workflow_dispatch:
+      inputs:
+        environment:
+          description: 'Choose the environment to deploy to (DEV, UAT, PROD)'
+          required: true
+          default: DEV
+          type: choice
+          options:
+            - DEV
+            - UAT
+            - PROD
+  #push:
+  #  branches:
+  #    - dev
+  #  paths:
+  #    - '300_PEOPLESOFT/002_REFINED/**'
   
 
   #Allows you to run this workflow manually from the Actions tab,2 options:- environment
