@@ -55,7 +55,7 @@ jobs:
           pip install schemachange
           echo "Deploying to environment: ${{ env.ENVRN }}"
           python --version
-          VARS="{\"env\":\"${{ env.ENVRN }}\"}"
+          VARS=$("{\"env\":\"${{ env.ENVRN }}\"}")
           echo "Showing VARS string: ${{ env.VARS }}"
           schemachange -f $GITHUB_WORKSPACE/200_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars ${{ env.VARS }} -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
       
