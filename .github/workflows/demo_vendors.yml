@@ -1,10 +1,10 @@
 name: Deploy to vendors database in Snowflake
 
 on:
-  pull_request:
-      types: [closed]  # Trigger when a pull request is closed
-      branches:
-        - main  # Only trigger if the PR is merged into the 'dev' branch
+  #pull_request:
+  #    types: [closed]  # Trigger when a pull request is closed
+  #    branches:
+  #      - main  # Only trigger if the PR is merged into the 'dev' branch
     
   workflow_dispatch:
       inputs:
@@ -17,11 +17,11 @@ on:
             - DEV
             - UAT
             - PROD
-  #push:
-  #  branches:
-  #    - dev
-  #  paths:
-  #    - '200_VENDORS/002_REFINED/**'
+  push:
+    branches:
+      - dev_db_objs
+    paths:
+      - '200_VENDORS/002_REFINED/**'
 
 jobs:
   deploy-snowflake-changes-job:
@@ -55,7 +55,9 @@ jobs:
           pip install schemachange
           echo "Deploying to environment: ${{ env.ENVRN }}"
           python --version
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars '{\"env\":\"${{ env.ENVRN }}\"}' -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          VARS="{\"env\":\"${{ env.ENVRN }}\"}"
+          echo "Showing VARS string: ${{ env.VARS }}"
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars ${{ env.VARS }} -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
       
       - name: Call ingestion procedure through Snowsql
         if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
