@@ -1,0 +1,3 @@
+USE DATABASE {{ env }}_VENDORS;
+USE SCHEMA CONSUMPTION;
+CREATE OR REPLACE VIEW {{ env }}_consumption_secondview AS SELECT CONCAT(FIRST_NAME,'--',LAST_NAME) AS FULL_NAME FROM {{ env }}_VENDORS.REFINED.{{ env }}_VENDORS_refined_secondview;
