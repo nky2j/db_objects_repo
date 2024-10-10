@@ -21,7 +21,7 @@ on:
     branches:
       - dev_db_objs
     paths:
-      - '200_VENDORS/**'
+      - '200_VENDORS/002_REFINED/1001_TABLE/**'
 
 jobs:
   deploy-snowflake-changes-job:
@@ -57,7 +57,7 @@ jobs:
           python --version
           VARS="{\"env\":\"${{ env.ENVRN }}\"}"
           echo "Showing VARS string: $VARS"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
       
       - name: Call ingestion procedure through Snowsql
         if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
