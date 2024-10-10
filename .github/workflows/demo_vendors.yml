@@ -21,7 +21,7 @@ on:
     branches:
       - dev_db_objs
     paths:
-      - '200_VENDORS/002_REFINED/**'
+      - '200_VENDORS/**'
 
 jobs:
   deploy-snowflake-changes-job:
