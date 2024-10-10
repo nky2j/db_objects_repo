@@ -29,9 +29,9 @@ jobs:
 
     environment: |-
       ${{
-        github.ref_name == 'main' && 'prd'
-      ||    github.ref_name == 'uat'    && 'uat'
-      ||                                'dev'
+        github.ref_name == 'main' && 'PROD'
+      ||    github.ref_name == 'uat'    && 'UAT'
+      ||                                'DEV'
         }}
 
     steps:
