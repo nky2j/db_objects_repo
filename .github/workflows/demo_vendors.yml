@@ -27,7 +27,12 @@ jobs:
   deploy-snowflake-changes-job:
     runs-on: ubuntu-latest
 
-    environment: ${{ vars.ENV }}
+    environment: |-
+      ${{
+        github.ref_name == 'main' && 'prd'
+      ||    github.ref_name == 'uat'    && 'uat'
+      ||                                'dev'
+        }}
 
     steps:
       - name: Checkout repository
@@ -38,8 +43,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Set environment variable
-        run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
+      #- name: Set environment variable
+      #  run: echo "ENV=${{ vars.ENV }}" >> $GITHUB_ENV
 
       - name: Run schemachange
         if: ${{ !contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
@@ -53,9 +58,9 @@ jobs:
           ENVRN: ${{ vars.ENV }}
         run: |
           pip install schemachange
-          echo "Deploying to environment: ${{ env.ENVRN }}"
+          echo "Deploying to environment: $ENVRN"
           python --version
-          VARS="{\"env\":\"${{ env.ENVRN }}\", \"DTB\":\"${{ env.SF_DATABASE }}\"}"
+          VARS="{\"env\":\"$ENVRN\", \"DTB\":\"$SF_DATABASE\"}"
           echo "Showing VARS string: $VARS"
           schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
       
