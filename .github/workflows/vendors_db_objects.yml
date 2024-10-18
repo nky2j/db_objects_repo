@@ -21,7 +21,7 @@ on:
   #  branches:
   #    - dev_db_objs
   #  paths:
-  #    - '200_VENDORS/002_REFINED/1001_TABLE/**'
+  #    - '200_VENDORS/002_REFINED/**'
 
 jobs:
   deploy-snowflake-changes-job:
@@ -60,11 +60,12 @@ jobs:
 
       - name: Run schemachange
         env:
+          ROOT_FOLDER: /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/DBSCRIPTS/200_VENDORS
           SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}
           SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
           SF_USERNAME: ${{ vars.SF_USERNAME }}
           SF_ROLE: ${{ vars.SF_ROLE }}
-          SF_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
+          SF_DATABASE: ${{ vars.ENV_UC }}_VENDORS
           #SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
           SNOWFLAKE_PRIVATE_KEY_PATH: /home/runner/.ssh/snowflake_private_key.pem
           VAR_ENV_UC: ${{ vars.ENV_UC }}
@@ -78,22 +79,26 @@ jobs:
           python /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/.github/schema_change.py 
           
           echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
-      
-      - name: Call ingestion procedure through Snowsql
-        if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
-        env:
-          SNOWSQL_DEST: ~/snowflake
-          SNOWSQL_ACCOUNT: ${{ vars.SF_ACCOUNT }}
-          SNOWSQL_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
-          SNOWSQL_USER: ${{ vars.SF_USERNAME }}
-          SNOWSQL_ROLE: ${{ vars.SF_ROLE }}
-          SNOWSQL_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
-          SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          ENV: ${{ vars.ENV }}
-        run: | 
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-          ~/snowflake/snowsql -v
-          echo "Calling the ingestion procedure: ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
-          snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()"
+          #schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          schemachange -c ${VAR_ENV_UC}_VENDORS.SCHEMACHANGE.CHANGE_HISTORY
+          FILE_CONTENT=$(cat /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/DBSCRIPTS/200_VENDORS/002_REFINED/1007_TASK/R__200_002_1007_raw_to_refined_ingestion.sql)
+          # Print the content of the variable
+          echo "$FILE_CONTENT"
+          
+      #- name: Call ingestion procedure through Snowsql
+      #  if: ${{ contains(github.event.head_commit.message, 'Calling raw_to_refined proc') }}
+      #  env:
+      #    SNOWSQL_DEST: ~/snowflake
+      #    SNOWSQL_ACCOUNT: ${{ vars.SF_ACCOUNT }}
+      #    SNOWSQL_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
+      #    SNOWSQL_USER: ${{ vars.SF_USERNAME }}
+      #    SNOWSQL_ROLE: ${{ vars.SF_ROLE }}
+      #    SNOWSQL_DATABASE: ${{ vars.SF_VENDORS_DATABASE }}
+      #    SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      #    ENV: ${{ vars.ENV }}
+      #  run: | 
+      #    curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      #    SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      #    ~/snowflake/snowsql -v
+      #    echo "Calling the ingestion procedure: ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION"
+      #    snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -q "CALL ${ENV}_VENDORS.REFINED.${ENV}_PEOPLESOFT_RAW_TO_REFINED_INGESTION()"

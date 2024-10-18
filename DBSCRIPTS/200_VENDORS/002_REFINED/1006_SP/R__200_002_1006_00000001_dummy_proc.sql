@@ -1,6 +1,4 @@
-USE DATABASE {{ env }}_VENDORS;
-USE SCHEMA REFINED;
-
+/*
 CREATE OR REPLACE procedure {{ env }}_VENDORS_RAW_TO_REFINED_INGESTION()
 RETURNS VARCHAR
 LANGUAGE PYTHON
@@ -41,5 +39,17 @@ def main(session: Session) -> str:
         return f"An error occurred: {e}"
 
 $$;
-
-
+*/
+CREATE OR REPLACE PROCEDURE REFINED.{{ env }}_DUMMY_PROCEDURE(
+    ARG1 STRING,  -- First argument (string type)
+    ARG2 NUMBER,  -- Second argument (number type)
+    ARG3 DATE     -- Third argument (date type)
+)
+RETURNS STRING  -- Return type of the procedure
+LANGUAGE SQL
+AS
+$$
+BEGIN
+    RETURN 'Received: ' || ARG1 || ', ' || ARG2 || ', ' || TO_CHAR(ARG3);
+END;
+$$;
