@@ -4,7 +4,7 @@ on:
   pull_request:
       types: [closed]  # Trigger when a pull request is closed
       branches:
-        - main  # Only trigger if the PR is merged into the 'dev' branch
+        - dev  # Only trigger if the PR is merged into the 'dev' branch
     
   workflow_dispatch:
       inputs:

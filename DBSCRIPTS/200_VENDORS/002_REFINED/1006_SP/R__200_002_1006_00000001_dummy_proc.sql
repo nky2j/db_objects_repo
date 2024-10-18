@@ -40,7 +40,7 @@ def main(session: Session) -> str:
 
 $$;
 */
-CREATE OR REPLACE PROCEDURE REFINED.{{ env }}_DUMMY_PROCEDURE(
+CREATE OR  REPLACE PROCEDURE REFINED.{{ env }}_DUMMY_PROCEDURE(
     ARG1 STRING,  -- First argument (string type)
     ARG2 NUMBER,  -- Second argument (number type)
     ARG3 DATE     -- Third argument (date type)
