@@ -5,7 +5,7 @@ CREATE TASK {{ env }}_VENDORS_RAW_TO_REFINED_TASK
   AS CALL {{ env }}_VENDORS_RAW_TO_REFINED_INGESTION();
 */
 
-create or  replace task REFINED.{{ env }}_DUMMY_TASK
+create or replace task REFINED.{{ env }}_DUMMY_TASK
 warehouse={{ VAR_ENV_UC }}_ENGINEER_WH
 as 
 BEGIN
