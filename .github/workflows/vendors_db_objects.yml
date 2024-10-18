@@ -60,7 +60,7 @@ jobs:
 
       - name: Run schemachange
         env:
-          ROOT_FOLDER: /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/DBSCRIPTS/200_VENDORS
+          ROOT_FOLDER: /home/runner/work/db_objects_repo/db_objects_repo/DBSCRIPTS/200_VENDORS
           SF_ACCOUNT: ${{ vars.SF_ACCOUNT }}
           SF_WAREHOUSE: ${{ vars.SF_WAREHOUSE }}
           SF_USERNAME: ${{ vars.SF_USERNAME }}
@@ -76,12 +76,12 @@ jobs:
           python --version
           echo "Step 1: Installing schemachange"
           pip install schemachange python-dotenv pyyaml
-          python /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/.github/schema_change.py 
+          python /home/runner/work/db_objects_repo/db_objects_repo/.github/schema_change.py 
           
           echo "Step 2: Running schemachange"
           #schemachange -f $GITHUB_WORKSPACE/200_VENDORS/002_REFINED/1001_TABLE -a $SF_ACCOUNT -u $SNOWFLAKE_USER -r $SF_ROLE -w $SF_WAREHOUSE --vars "$VARS" -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
           schemachange -c ${VAR_ENV_UC}_VENDORS.SCHEMACHANGE.CHANGE_HISTORY
-          FILE_CONTENT=$(cat /home/runner/work/DB_OBJECTS_REPO/DB_OBJECTS_REPO/DBSCRIPTS/200_VENDORS/002_REFINED/1007_TASK/R__200_002_1007_raw_to_refined_ingestion.sql)
+          FILE_CONTENT=$(cat /home/runner/work/db_objects_repo/db_objects_repo/DBSCRIPTS/200_VENDORS/002_REFINED/1007_TASK/R__200_002_1007_raw_to_refined_ingestion.sql)
           # Print the content of the variable
           echo "$FILE_CONTENT"
           
